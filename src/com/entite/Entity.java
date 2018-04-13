@@ -22,7 +22,7 @@ public abstract class Entity {
 	protected boolean isDead;
 	
 	// return the damage of the attack of an entity
-	public abstract int attack();
+	public abstract void attack(Entity...targets);
 	
 	// describe an entity in a string which is returning by the function
 	public String toString() {
@@ -31,7 +31,7 @@ public abstract class Entity {
 	
 	// setters
 	public void setHP(int hp) {
-		this.hp = hp;
+		this.hp = Math.max(0,this.hp-hp);
 		System.out.println(this.getName() +" now has "+ KCYN +""+ this.getHP() +""+ KNRM +" HPs");
 		// is it dead ?
 		this.setLife();

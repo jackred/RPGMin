@@ -2,22 +2,26 @@ package com.battle;
 
 import com.entite.*;
 
-import java.util.Arrays;
-import java.util.concurrent.ThreadLocalRandom;
-
 public class Battle {
+	Entity[] mages;
+	Entity demon;	
+	
+	public Battle(Entity[] mages, Entity demon) {
+		this.demon = demon;
+		this.mages = mages;
+	}
 	/*
 	 * fight method
 	 * take a team of 4 mages and a demon, and makes them fight
 	 * it's a turn by turn battle
 	 */
-	public void fight (Entity demon, Entity mage[]) {
+	public void fight () {
 		System.out.println("The battle start");
-		while ((!(isWin(demon))) && (!(isWin(mage)))) {
-			turn(demon, mage);
+		while (!(isWin())) {
+			turn();
 		}
 		// display the winner
-		announceVictory(demon, mage);
+		announceVictory();
 	}
 	
 	/*
@@ -30,54 +34,43 @@ public class Battle {
 	 *  4th mage
 	 *  demon   
 	 */
-	public void turn (Entity demon, Entity mage[]) {
-		System.out.print("");
+	public void turn (){
+		System.out.println("\n");
 		int i = 0;
-		boolean tmp = true;
-		Entity aliveMage[];
-		while (i < mage.length && tmp ) {
-			attackEntity(mage[i],demon);
-			tmp = (!(isWin(demon))) && (!(isWin(mage)));
+		while (i < mages.length && (!(isWin())) ) {
+			if (!(mages[i].getLife())) {
+				mages[i].attack(demon);
+			}
 			// 1%1 and 3%1 == 1
-			if ((i % 2 == 1) && ((tmp))) {
-				// the demon attack alive mage
-				aliveMage = Arrays.stream(mage).filter(x -> (!(x.getLife()))).toArray(Entity[]::new);
-				attackEntity(demon,aliveMage[ThreadLocalRandom.current().nextInt(0,aliveMage.length)]);
+			if ((i % 2 == 1) && (!(isWin()))) {
+				System.out.println("");
+				demon.attack(mages);
+				System.out.println("");
 			}
 			i++;
 		}
 	}
 	
-	// attack method taking a target and an attacker
-	public void attackEntity(Entity atks, Entity target) {
-		int dmg = atks.attack();
-		target.setHP(target.getHP() - dmg);
-	}
-	
 	// did the mage team win ?
-	public boolean isWin(Entity entite[]) {
+	public boolean isWin(){
 		boolean tmp = true;
-		for (Entity one: entite) {
+		for (Entity one: mages) {
 			tmp = tmp && one.getLife();
 		}
-		return(tmp);
+		return(tmp || demon.getLife());
 	}
-	// did the demon win ?
-	public boolean isWin(Entity entity) {
-		return(entity.getLife());
-	}
-	
+
 	// display all the opponents
-	public void display(Entity demon, Entity mage[]) {
+	public void display() {
 		System.out.println(demon.toString());
-		for(Entity one:mage) {
+		for(Entity one:mages) {
 			System.out.println(one.toString());
 		}
 	}
 	
 	// display the winner
-	public void announceVictory(Entity demon, Entity mage[]) {
-		if (isWin(demon)) {
+	public void announceVictory() {
+		if (demon.getLife()) {
 			System.out.println("The mages won");
 		} else {
 			System.out.println("The demon win");
